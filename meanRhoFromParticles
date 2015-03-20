@@ -1,0 +1,22 @@
+#Use this like Glyphs>Probe>Programmable to calculate mean particle density at probe location.
+
+active = inputs[0].PointData['active']
+rho = inputs[0].PointData['rho']
+activeCountArray = vtk.vtkDoubleArray()
+activeCountArray.SetName('Active Count')
+activeCountArray.SetNumberOfComponents(1)
+activeCount = [0]
+meanRhoArray = vtk.vtkDoubleArray()
+meanRhoArray.SetName('Mean Density')
+meanRhoArray.SetNumberOfComponents(1)
+meanRho = [0]
+
+for i in range(inputs[0].GetNumberOfPoints()):
+    if active[i] > 0:
+        activeCount[0] = activeCount[0] + 1.0
+    meanRho = meanRho + rho[i]
+meanRho = meanRho / activeCount
+activeCountArray.InsertNextTupleValue(activeCount)
+meanRhoArray.InsertNextTupleValue(meanRho)
+output.GetPointData().AddArray(activeCountArray)
+output.GetPointData().AddArray(meanRhoArray)
